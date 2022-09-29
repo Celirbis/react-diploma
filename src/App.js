@@ -7,6 +7,7 @@ import MainPage from './components/MainPage';
 import CatalogPage from './components/CatalogPage';
 import AboutPage from './components/AboutPage';
 import ContactsPage from './components/ContactsPage';
+import ProductPage from './components/ProductPage';
 import Page404 from './components/Page404';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/catalog.html" element={<CatalogPage />} />
+            <Route path="/products/:id.html" element={<ProductPage />} />
             <Route path="/about.html" element={<AboutPage />} />
             <Route path="/contacts.html" element={<ContactsPage />} />
             <Route path="*" element={<Page404 />} />
