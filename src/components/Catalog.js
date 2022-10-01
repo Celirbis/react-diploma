@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import ErrorMessage from "./ErrorMessage";
 
 import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { fetchCatalog, fetchCatalogCategories, changeCategory } from '../store/catalogSlice';
 
 function Catalog() {
@@ -20,7 +20,7 @@ function Catalog() {
         dispatch(changeCategory(0));
         dispatch(fetchCatalog());
         dispatch(fetchCatalogCategories());
-    }, []);
+    }, [dispatch]);
 
     const handleLoading = (evt) => {
         dispatch(fetchCatalog());

@@ -2,13 +2,18 @@ import MainBanner from "./MainBanner";
 import Catalog from "./Catalog";
 import { useSelector, useDispatch } from 'react-redux';
 import { changeQuery, fetchCatalog } from '../store/catalogSlice';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function CatalogPage() {
 
     const dispatch = useDispatch();
     const searchQuery = useSelector(state => state.catalog.searchQuery);
     const [form, setForm] = useState({ search: searchQuery });
+
+    //this is to force rerender when searchQuery got updated from the header component while CatalogPage is already rendered
+    useEffect(() => { 
+        setForm({ search: searchQuery });
+    }, [searchQuery]);
 
     const handleChange = (evt) => {
         const { value } = evt.target;
@@ -20,8 +25,6 @@ function CatalogPage() {
         dispatch(changeQuery(form.search));
         dispatch(fetchCatalog());
     };
-
-
 
     return (
         <div>
