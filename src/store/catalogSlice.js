@@ -23,9 +23,9 @@ export const fetchCatalog = createAsyncThunk(
     'catalog/fetchCatalog',
     async function (_, { rejectWithValue, getState }) {
         try {
-            const { itemsLoaded, categoryChosen } = getState().catalog;
+            const { itemsLoaded, categoryChosen, searchQuery } = getState().catalog;
 
-            const response = await fetch(`http://localhost:7070/api/items?categoryId=${categoryChosen}&offset=${itemsLoaded}`); //http://localhost:7070/api/items?categoryId=${itemsLoaded}&offset=${categoryChosen}
+            const response = await fetch(`http://localhost:7070/api/items?categoryId=${categoryChosen}&offset=${itemsLoaded}&q=${searchQuery}`);
 
             if (!response.ok) {
                 throw new Error('Server Error!');
@@ -49,11 +49,18 @@ const catalogSlice = createSlice({
         itemsLoaded: 0,
         moreItemsAvailable: true,
         categoryChosen: 0,
+        searchQuery: "",
         error: null
     },
     reducers: {
         changeCategory(state, action) {
             state.categoryChosen = action.payload;
+            state.products = [];
+            state.itemsLoaded = 0;
+            state.moreItemsAvailable = true;
+        },
+        changeQuery(state, action) {
+            state.searchQuery = action.payload;
             state.products = [];
             state.itemsLoaded = 0;
             state.moreItemsAvailable = true;
@@ -85,5 +92,5 @@ const catalogSlice = createSlice({
     }
 });
 
-export const { changeCategory } = catalogSlice.actions;
+export const { changeCategory, changeQuery } = catalogSlice.actions;
 export default catalogSlice.reducer;
