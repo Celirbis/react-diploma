@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+export const DEFAULT_CATEGORY = 0;
+
 export const fetchCatalogCategories = createAsyncThunk(
     'catalog/fetchCatalogCategories',
     async function (_, { rejectWithValue }) {
@@ -48,7 +50,7 @@ const catalogSlice = createSlice({
         loading: false,
         itemsLoaded: 0,
         moreItemsAvailable: true,
-        categoryChosen: 0,
+        categoryChosen: DEFAULT_CATEGORY,
         searchQuery: "",
         error: null
     },

@@ -4,7 +4,7 @@ import ErrorMessage from "./ErrorMessage";
 
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect } from 'react'
-import { fetchCatalog, fetchCatalogCategories, changeCategory } from '../store/catalogSlice';
+import { fetchCatalog, fetchCatalogCategories, changeCategory, DEFAULT_CATEGORY } from '../store/catalogSlice';
 
 function Catalog() {
 
@@ -17,7 +17,7 @@ function Catalog() {
     const moreItemsAvailable = useSelector(state => state.catalog.moreItemsAvailable);
 
     useEffect(() => {
-        dispatch(changeCategory(0));
+        dispatch(changeCategory(DEFAULT_CATEGORY));
         dispatch(fetchCatalog());
         dispatch(fetchCatalogCategories());
     }, [dispatch]);
@@ -35,7 +35,7 @@ function Catalog() {
         <>
             <ul className="catalog-categories nav justify-content-center">
                 <li className="nav-item">
-                    <a className={"nav-link" + (categoryChosen === 0 ? " active" : "")} href="#!" onClick={handleCategoryChange} name="0">Все</a>
+                    <a className={"nav-link" + (categoryChosen === DEFAULT_CATEGORY ? " active" : "")} href="#!" onClick={handleCategoryChange} name="0">Все</a>
                 </li>
                 {CategoriesList.map(o =>
                     <li className="nav-item" key={o.id}>

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
 
 /**
  * Отображение товара карточкой
@@ -18,7 +19,7 @@ function ProductCard(props) {
             <div className="card-body">
                 <p className="card-text">{name}</p>
                 <p className="card-text">{price} руб.</p>
-                <a href={`/products/${id}.html`} className="btn btn-outline-primary">Заказать</a>
+                <Link to={`/products/${id}.html`} className="btn btn-outline-primary">Заказать</Link>
             </div>
         </div>
     );

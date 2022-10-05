@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/cartSlice';
+
 import MainBanner from "./MainBanner";
 import Preloader from "./Preloader";
 
 function ProductPage(props) {
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { id } = useParams();
     const [product, setProduct] = useState();
     const [sizes, setSizes] = useState();
-    const [sizeSelected, setSizeSelected] = useState();
+    const [sizeSelected, setSizeSelected] = useState(null);
     const [amount, setAmount] = useState(1);
+    const [canBeBought, setCanBeBought] = useState(false);
 
     useEffect(() => {
         fetch(`http://localhost:7070/api/items/${id}`)
@@ -18,25 +24,38 @@ function ProductPage(props) {
                 setProduct(data);
                 const filtered = data.sizes.filter(o => o.avalible);
                 setSizes(filtered);
-                setSizeSelected(filtered[0]?.size);
+
+                if (filtered.length > 0) setCanBeBought(true);
+                else setCanBeBought(false);
+                //setSizeSelected(filtered[0]?.size);
             });
     }, [id]);
 
     const handleAmountUp = () => {
-        setAmount((prev) => prev + 1);
+        if (amount < 10) setAmount((prev) => prev + 1);
     };
     const handleAmountDown = () => {
         if (amount > 1) setAmount((prev) => prev - 1);
     };
-    const handleChooseSize = ({target}) => { 
+    const handleChooseSize = ({ target }) => {
         setSizeSelected(target.attributes.name.value);
     };
 
-    const handleBuy = () => { 
-        //добавление в корзину
+    const handleBuy = (evt) => {
+        if (sizeSelected) {
+            const preparedProduct = {
+                id: id,
+                price: product.price,
+                name: product.title,
+                size: sizeSelected,
+                amount: amount
+            };
+            dispatch(addToCart(preparedProduct));
+            navigate("/cart.html");
+        }
     };
 
-    return (!product ? <Preloader /> : 
+    return (!product ? <Preloader /> :
         <div className="row">
             <div className="col">
                 <MainBanner />
@@ -76,7 +95,7 @@ function ProductPage(props) {
                                     </tr>
                                 </tbody>
                             </table>
-                            <div className="text-center">
+                            {canBeBought && <div className="text-center">
                                 <p>Размеры в наличии: {sizes.map(o =>
                                     <span key={o.size} name={o.size} onClick={handleChooseSize} className={"catalog-item-size" + (o.size === sizeSelected ? " selected" : "")}>
                                         {o.size}
@@ -88,8 +107,8 @@ function ProductPage(props) {
                                     <button className="btn btn-secondary" onClick={handleAmountUp}>+</button>
                                 </span>
                                 </p>
-                            </div>
-                            <button className="btn btn-danger btn-block btn-lg" onClick={handleBuy}>В корзину</button>
+                            </div>}
+                            {canBeBought && <button className="btn btn-danger btn-block btn-lg" onClick={handleBuy}>В корзину</button>}
                         </div>
                     </div>
                 </section>

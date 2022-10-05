@@ -8,6 +8,7 @@ import CatalogPage from './components/CatalogPage';
 import AboutPage from './components/AboutPage';
 import ContactsPage from './components/ContactsPage';
 import ProductPage from './components/ProductPage';
+import CartPage from './components/CartPage';
 import Page404 from './components/Page404';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="/products/:id.html" element={<ProductPage />} />
             <Route path="/about.html" element={<AboutPage />} />
             <Route path="/contacts.html" element={<ContactsPage />} />
+            <Route path="/cart.html" element={<CartPage />} />
             <Route path="*" element={<Page404 />} />
           </Routes>
         </main>
