@@ -1,33 +1,42 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-/*export const fetchCatalogCategories = createAsyncThunk(
-    'catalog/fetchCatalogCategories',
-    async function (_, { rejectWithValue }) {
+export const sendOrder = createAsyncThunk(
+    'cart/sendOrder',
+    async function (ownerData, { rejectWithValue, getState }) {
+        const items = getState().cart.products.map(o => ({ id: o.id, price: o.price, count: o.amount }));
+        const owner = { phone: ownerData.phone, address: ownerData.address };
+
         try {
-            const response = await fetch('http://localhost:7070/api/categories');
+            const response = await fetch('http://localhost:7070/api/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({ owner, items }),
+            });
 
             if (!response.ok) {
                 throw new Error('Server Error!');
             }
 
-            const data = await response.json();
-
+            const data = await response.text();
             return data;
         } catch (error) {
             return rejectWithValue(error.message);
         }
     }
-);*/
+);
 
 const cartSlice = createSlice({
     name: 'cart',
     initialState: {
         products: [],
         productsInCart: 0,
-        error: null
+        orderComplited: false,
     },
     reducers: {
         addToCart(state, { payload: newProduct }) {
+            state.orderComplited = false;
             const oldProduct = state.products.find(o => (o.id === newProduct.id && o.size === newProduct.size));
             if (!oldProduct) {
                 state.products = [...state.products, newProduct];
@@ -45,20 +54,14 @@ const cartSlice = createSlice({
 
     },
     extraReducers: {
-        /*[fetchCatalog.pending]: (state) => {
-            state.loading = true;
-            state.error = null;
+        [sendOrder.fulfilled]: (state) => {
+            state.orderComplited = true;
+            state.products = [];
+            state.productsInCart = 0;
         },
-        [fetchCatalog.fulfilled]: (state, action) => {
-            state.loading = false;
-            state.products = [...state.products, ...action.payload];
-            state.itemsLoaded = state.products.length;
-            if (action.payload.length < 6) state.moreItemsAvailable = false;
+        [sendOrder.rejected]: (state, action) => {
+            console.log(`Failed to order. Error: ${action.payload}`);
         },
-        [fetchCatalog.rejected]: (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-        },*/
     }
 });
 

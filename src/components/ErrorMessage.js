@@ -2,7 +2,7 @@ function ErrorMessage({ error }) {
 
     return (
         <div>
-            <p>{error}</p>
+            <p>{`Произошла ошибка! (${error})`}</p>
         </div>
     );
 }

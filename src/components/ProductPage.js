@@ -5,6 +5,7 @@ import { addToCart } from '../store/cartSlice';
 
 import MainBanner from "./MainBanner";
 import Preloader from "./Preloader";
+import ErrorMessage from "./ErrorMessage";
 
 function ProductPage(props) {
 
@@ -18,18 +19,28 @@ function ProductPage(props) {
     const [canBeBought, setCanBeBought] = useState(false);
 
     useEffect(() => {
-        fetch(`http://localhost:7070/api/items/${id}`)
-            .then(response => response.json())
-            .then(data => {
-                setProduct(data);
-                const filtered = data.sizes.filter(o => o.avalible);
-                setSizes(filtered);
-
-                if (filtered.length > 0) setCanBeBought(true);
-                else setCanBeBought(false);
-                //setSizeSelected(filtered[0]?.size);
-            });
+        fetchProductData();
     }, [id]);
+
+    async function fetchProductData() {
+
+        const response = await fetch(`http://localhost:7070/api/items/${id}`);
+
+        if (response.status === 404) {
+            navigate('/404.html');
+        }
+        else {
+            const data = await response.json();
+            setProduct(data);
+            const filtered = data.sizes.filter(o => o.avalible);
+            setSizes(filtered);
+
+            if (filtered.length > 0) setCanBeBought(true);
+            else setCanBeBought(false);
+            //setSizeSelected(filtered[0]?.size);
+        }
+    }
+
 
     const handleAmountUp = () => {
         if (amount < 10) setAmount((prev) => prev + 1);
@@ -44,8 +55,8 @@ function ProductPage(props) {
     const handleBuy = (evt) => {
         if (sizeSelected) {
             const preparedProduct = {
-                id: id,
-                price: product.price,
+                id: Number(id),
+                price: Number(product.price),
                 name: product.title,
                 size: sizeSelected,
                 amount: amount
